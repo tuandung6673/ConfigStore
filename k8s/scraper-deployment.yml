@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: scraper
+  name: scraper-service
+  labels:
+    app: scraper-service
+spec:
+  ports:
+    - port: 5057
+      targetPort: 5057
+      nodePort: 30507
+      name: http
+  type: NodePort # debug
+  selector:
+    app: scraper-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: scraper
+  name: scraper-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scraper-service
+  template:
+    metadata:
+      labels:
+        app: scraper-service
+    spec:
+      containers:
+        - name: scraper-service
+          image: tuandung7366/scraper-cs:1.0
+          ports:
+            - containerPort: 5057
+              name: http
+          # resources:
+          #   limits:
+          #     cpu: 250m
+          #     memory: 250Mi
