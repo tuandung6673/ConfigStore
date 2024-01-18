@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: scraper
+  name: scraper-frontend
+  labels:
+    app: scraper-frontend
+spec:
+  ports:
+    - port: 7777
+      targetPort: 7777
+      nodePort: 32177
+      name: http
+    - port: 443
+      targetPort: 443
+      nodePort: 32143
+      name: https
+  type: NodePort
+  selector:
+    app: scraper-frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: scraper
+  name: scraper-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scraper-frontend
+  template:
+    metadata:
+      labels:
+        app: scraper-frontend
+    spec:
+      containers:
+        - name: scraper-frontend
+          image: tuandung7366/scraper-fe:1.0
+          ports:
+            - containerPort: 7777
+              name: http
+            - containerPort: 443
+              name: https
+          # resources:
+          #   limits:
+          #     cpu: 250m
+          #     memory: 250Mi

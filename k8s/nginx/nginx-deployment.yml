@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: scraper
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+      nodePort: 30080
+      name: http-port
+    - port: 8082
+      targetPort: 8082
+      nodePort: 30443
+      name: https-port
+  type: NodePort
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: scraper
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-scraper
+          image: nginx:latest
+          ports:
+            - containerPort: 8081
+            - containerPort: 8082
+          volumeMounts:
+            - mountPath: /etc/nginx
+              name: config
+            - mountPath: '/certs'
+              name: cert-config
+          resources:
+            limits:
+              cpu: 250m
+              memory: 200Mi
+      volumes:
+        - name: config
+          configMap:
+            name: nginx-conf
+        - name: cert-config
+          secret:
+            secretName: 'nginx-cert'
