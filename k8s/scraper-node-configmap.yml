@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: scraper
+  name: scraper-node
+data:
+  # PORT: "30211"
+  BASEURL: http://longdqsys.io.vn:30507
+  # TELE_BOT_TOKEN: 6971535549:AAHA6GVIPVe-kiG0XVh-Yq0SRFeV9LbVYec
+  # TELE_CHAT_ID: "1300590032"
